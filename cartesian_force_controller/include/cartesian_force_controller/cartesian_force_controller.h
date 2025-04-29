@@ -108,6 +108,7 @@ private:
 
   rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr m_target_wrench_subscriber;
   rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr m_ft_sensor_wrench_subscriber;
+  rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr m_calib_wrench_publisher;
   ctrl::Vector6D m_target_wrench;
   ctrl::Vector6D m_ft_sensor_wrench;
   std::string m_ft_sensor_ref_link;
@@ -120,6 +121,32 @@ private:
      * intuitive for tele-manipulation.
      */
   bool m_hand_frame_control;
+
+  // 死区参数
+  double m_force_deadzone;
+  double m_torque_deadzone;
+  
+  // 自动调零参数
+  ctrl::Vector6D m_force_bias;
+  bool m_is_calibrating;
+  std::vector<ctrl::Vector6D> m_calibration_data;
+  int m_calibration_samples;
+  double m_auto_calibration_interval;  // 自动调零间隔(秒)
+  rclcpp::Time m_last_calibration_time;
+  
+  // 新增函数
+  void initializeCalibration();
+  void updateCalibration(const KDL::Wrench& wrench);
+  KDL::Wrench applyDeadzone(const KDL::Wrench& wrench);
+
+  // 滤波器参数
+  double m_filter_coefficient;  // 滤波系数
+  ctrl::Vector6D m_filtered_wrench;  // 滤波后的力矩
+  bool m_filter_initialized;
+
+  // 滤波器函数
+  ctrl::Vector6D lowPassFilter(const ctrl::Vector6D& input);
+  void initializeFilter(const ctrl::Vector6D& initial_value);
 };
 
 }  // namespace cartesian_force_controller
