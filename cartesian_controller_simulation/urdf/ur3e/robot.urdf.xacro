@@ -19,50 +19,29 @@
       physical_parameters_file="$(find ur_description)/config/ur3e/physical_parameters.yaml" 
       visual_parameters_file="$(find ur_description)/config/ur3e/visual_parameters.yaml" 
       use_fake_hardware="true" 
-      sim_gazebo="true">
+      sim_gazebo="false">
     <origin xyz="0 0.0 0.0" rpy="0 0 0" />
   </xacro:ur_robot>
 
+  <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint.urdf.xacro"/>
+
   <ros2_control name="cartesian_controller_simulation" type="system">
+    <xacro:joint_interface name="shoulder_pan_joint" p="1000" d="0.5" />
+    <xacro:joint_interface name="shoulder_lift_joint" p="1000" d="0.5" />
+    <xacro:joint_interface name="elbow_joint" p="500" d="0.5" />
+    <xacro:joint_interface name="wrist_1_joint" p="100" d="0.5" />
+    <xacro:joint_interface name="wrist_2_joint" p="10" d="0.5" />
+    <xacro:joint_interface name="wrist_3_joint" p="10" d="0.5" />
     <hardware>
-        <plugin>cartesian_controller_simulation/Simulator</plugin>
-        <param name="mujoco_model">$(arg mujoco_model)</param>
+      <plugin>cartesian_controller_simulation/Simulator</plugin>
+      <param name="mujoco_model">$(arg mujoco_model)</param>
     </hardware>
-    <joint name="shoulder_pan_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="shoulder_lift_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="elbow_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="wrist_1_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="wrist_2_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="wrist_3_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
   </ros2_control>
-  <gazebo>
+
+  <!-- <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
       <parameters>$(find ur_description)/config/initial_positions.yaml</parameters>
     </plugin>
-  </gazebo>
+  </gazebo> -->
 
 </robot>

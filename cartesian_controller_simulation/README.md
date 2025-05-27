@@ -21,7 +21,7 @@ It's ready-to-use and we will just point to it during the build.
 
 3. Switch to the *root* of your ROS2 workspace and build the package (*standalone*) with
    ```bash
-   colcon build --cmake-args "-DMUJOCO_DIR=$HOME/mujoco-3.0.0" --packages-select cartesian_controller_simulation
+   colcon build --cmake-args "-DMUJOCO_DIR=$MUJOCO_DIR" --packages-select cartesian_controller_simulation
    ```
 
 
