@@ -92,6 +92,7 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
         # prefix="screen -d -m gdb -command=/home/stefan/.gdb_debug_config --ex run --args",  # noqa E501
+        # prefix="xterm -e gdb -ex run --args",
         output="both",
         remappings=[
             ("~/robot_description", "/robot_description"),
@@ -103,6 +104,8 @@ def generate_launch_description():
             ("cartesian_force_controller/ft_sensor_wrench", "ft_sensor_wrench"),
             ("cartesian_compliance_controller/ft_sensor_wrench", "ft_sensor_wrench"),
         ],
+        # DEBUG: Use the DEBUG log level to see all debug messages
+        # ros_arguments=['--log-level', 'DEBUG'],
     )
 
     # Convenience function for easy spawner construction

@@ -130,7 +130,9 @@ Simulator::CallbackReturn Simulator::on_init(const hardware_interface::HardwareI
       return Simulator::CallbackReturn::ERROR;
     }
   }
-
+  // DEBUG: print the model path to the console
+  // DEBUG: check if the thread is running
+  RCLCPP_INFO(rclcpp::get_logger("Simulator"), "Starting simulation thread with model: %s", m_mujoco_model.c_str());
   return Simulator::CallbackReturn::SUCCESS;
 }
 
@@ -139,6 +141,9 @@ std::vector<hardware_interface::StateInterface> Simulator::export_state_interfac
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (std::size_t i = 0; i < info_.joints.size(); i++)
   {
+    // DEBUG: print the joint name to the console
+    RCLCPP_INFO(rclcpp::get_logger("Simulator"), "Exporting state interfaces for joint: %s",
+                info_.joints[i].name.c_str());
     state_interfaces.emplace_back(hardware_interface::StateInterface(
       info_.joints[i].name, hardware_interface::HW_IF_POSITION, &m_positions[i]));
     state_interfaces.emplace_back(hardware_interface::StateInterface(
@@ -197,6 +202,23 @@ Simulator::return_type Simulator::read([[maybe_unused]] const rclcpp::Time & tim
   m_positions = m_position_commands;
   m_velocities = m_velocity_commands;
 
+  // DEBUG: print the state to the console
+  // auto vec_to_string = [](const std::vector<double>& vec) {
+  //   std::ostringstream oss;
+  //   oss << "[";
+  //   for (size_t i = 0; i < vec.size(); ++i) {
+  //     oss << vec[i];
+  //     if (i != vec.size() - 1) oss << ", ";
+  //   }
+  //   oss << "]";
+  //   return oss.str();
+  // };
+  // RCLCPP_INFO(rclcpp::get_logger("Simulator"),
+  //             "Reading state: positions: %s, velocities: %s, efforts: %s",
+  //             vec_to_string(m_positions).c_str(),
+  //             vec_to_string(m_velocities).c_str(),
+  //             vec_to_string(m_efforts).c_str());
+
   return return_type::OK;
 }
 
@@ -206,6 +228,26 @@ Simulator::return_type Simulator::write([[maybe_unused]] const rclcpp::Time & ti
 {
   MuJoCoSimulator::getInstance().write(m_position_commands, m_velocity_commands, m_stiffness,
                                        m_damping);
+  // DEBUG: Helper lambda to convert vector<double> to string
+  // auto vec_to_string = [](const std::vector<double>& vec) {
+  //   std::ostringstream oss;
+  //   oss << "[";
+  //   for (size_t i = 0; i < vec.size(); ++i) {
+  //     oss << vec[i];
+  //     if (i != vec.size() - 1) oss << ", ";
+  //   }
+  //   oss << "]";
+  //   return oss.str();
+  // };
+
+  // DEBUG: print the commands to the console
+  // RCLCPP_INFO(rclcpp::get_logger("Simulator"),
+  //             //  "Writing commands: positions: %s",
+  //              "Writing commands: positions: %s, velocities: %s, stiffness: %s, damping: %s",
+  //              vec_to_string(MuJoCoSimulator::getInstance().pos_cmd).c_str(),
+  //              vec_to_string(MuJoCoSimulator::getInstance().vel_cmd).c_str(),
+  //              vec_to_string(MuJoCoSimulator::getInstance().stiff).c_str(),
+  //              vec_to_string(MuJoCoSimulator::getInstance().damp).c_str());
   return return_type::OK;
 }
 
