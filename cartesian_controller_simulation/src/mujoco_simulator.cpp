@@ -38,11 +38,20 @@
 //-----------------------------------------------------------------------------
 
 #include "cartesian_controller_simulation/mujoco_simulator.h"
+#include <GLFW/glfw3.h>
 
 #include <memory>
 
 namespace cartesian_controller_simulation
 {
+// OPTIMIZE: add static members for visualization in mujoco
+// NOTE: 添加静态成员变量
+GLFWwindow* window = nullptr;
+mjvCamera cam;
+mjvOption opt;
+mjvScene scn;
+mjrContext con;
+
 MuJoCoSimulator::MuJoCoSimulator() {}
 
 void MuJoCoSimulator::controlCB(const mjModel * m, mjData * d)
@@ -103,16 +112,63 @@ int MuJoCoSimulator::simulateImpl(const std::string & model_xml)
   // Connect our specific control input callback for MuJoCo's engine.
   mjcb_control = MuJoCoSimulator::controlCB;
 
+  // OPTIMIZE: initial visualization in mujoco
+  // NOTE: 初始化 GLFW
+  if (!glfwInit()) {
+      mju_error("Could not initialize GLFW");
+      return 1;
+  }
+  // NOTE: 创建窗口
+  window = glfwCreateWindow(1200, 900, "MuJoCo Simulation", NULL, NULL);
+  if (!window) {
+      glfwTerminate();
+      mju_error("Could not create GLFW window");
+      return 1;
+  }
+  glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
+  // NOTE: 初始化可视化
+  mjv_defaultCamera(&cam);
+  mjv_defaultOption(&opt);
+  mjv_defaultScene(&scn);
+  mjr_defaultContext(&con);
+  // NOTE: 创建场景和上下文
+  mjv_makeScene(m, &scn, 2000);
+  mjr_makeContext(m, &con, mjFONTSCALE_150);
+  // NOTE: 设置相机
+  cam.distance = 2.0;
+  cam.azimuth = 90.0;
+  cam.elevation = -20.0;
+
   // Simulate in realtime
-  while (true)
+  // OPTIMIZE: [while (true)]
+  while (!glfwWindowShouldClose(window))
   {
     mj_step(m, d);
+
+    // OPTIMIZE: add visualization in mujoco
+    // 渲染场景
+    mjrRect viewport = {0, 0, 0, 0};
+    glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
+    // 更新场景
+    mjv_updateScene(m, d, &opt, nullptr, &cam, mjCAT_ALL, &scn);
+    // 渲染
+    mjr_render(viewport, &scn, &con);
+    // 交换缓冲区
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 
     // Provide fresh data for ROS2-control
     state_mutex.lock();
     syncStates();
     state_mutex.unlock();
   }
+  // OPTIMIZE: clean source used by visualization in mujoco 
+  // 清理资源
+  mjv_freeScene(&scn);
+  mjr_freeContext(&con);
+  glfwDestroyWindow(window);
+  glfwTerminate();
 
   return 0;
 }

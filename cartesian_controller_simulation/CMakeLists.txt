@@ -19,6 +19,7 @@ find_package(cartesian_controller_base REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(glfw3 REQUIRED)
 
 # Mujoco comes as a pre-built library package.
 # Extract this package somewhere and point CMake towards it during the build process.
@@ -87,6 +88,8 @@ target_include_directories(mujoco_simulator PUBLIC
 # X11 OpenGL: link with libmujoco210.so, libglew.so, libGL.so
 target_link_libraries(mujoco_simulator PUBLIC
         ${MUJOCO_LIBRARIES}
+        # OPTIMIZE: use glfw3 to render in MuJoCo
+        glfw 
 )
 
 
