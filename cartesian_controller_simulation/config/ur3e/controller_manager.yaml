@@ -55,7 +55,7 @@ controller_manager:
 
 force_torque_sensor_broadcaster:
   ros__parameters:
-    sensor_name: tcp_fts_sensor
+    sensor_name: ft_sensor
     state_interface_names:
       - force.x
       - force.y
@@ -64,7 +64,8 @@ force_torque_sensor_broadcaster:
       - torque.y
       - torque.z
     frame_id: tool0
-    topic_name: wrench
+    # topic_name: wrench
+    topic_name: /ft_sensor_wrench
 
 cartesian_compliance_controller:
   ros__parameters:
