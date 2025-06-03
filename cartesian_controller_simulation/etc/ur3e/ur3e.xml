@@ -145,6 +145,8 @@
   <include file="initial_joint_states.xml"/>
 
   <!-- 添加力传感器配置 -->
+  <!-- FIXME: 目前碰撞力过大 -->
+  <!-- FIXME: 测试参考系 -->
   <sensor>
     <force name="ft_sensor_force" site="ft_sensor"/>
     <torque name="ft_sensor_torque" site="ft_sensor"/>

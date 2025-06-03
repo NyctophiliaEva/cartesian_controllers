@@ -53,6 +53,7 @@ controller_manager:
 #       wrist_2_joint: { trajectory: 0.2, goal: 0.1 }
 #       wrist_3_joint: { trajectory: 0.2, goal: 0.1 }
 
+# FIXME: 需要修改，未config成功
 force_torque_sensor_broadcaster:
   ros__parameters:
     sensor_name: ft_sensor
