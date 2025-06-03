@@ -111,6 +111,10 @@ public:
   void read(std::vector<double> & pos, std::vector<double> & vel, std::vector<double> & eff);
   void write(const std::vector<double> & pos, const std::vector<double> & vel,
              const std::vector<double> & stiff, const std::vector<double> & damp);
+
+  // OPTIMIZE: 获取力传感器数据的方法
+  bool getFTSensorData(std::array<double, 3>& force, std::array<double, 3>& torque);
+           
 };
 
 }  // namespace cartesian_controller_simulation

@@ -210,4 +210,29 @@ void MuJoCoSimulator::syncStates()
   }
 }
 
+// OPTIMIZE: 获取力传感器数据的方法
+bool MuJoCoSimulator::getFTSensorData(std::array<double, 3>& force, std::array<double, 3>& torque)
+{
+    std::lock_guard<std::mutex> lock(state_mutex);
+    
+    if (!m || !d) return false;
+    
+    int force_id = mj_name2id(m, mjOBJ_SENSOR, "ft_sensor_force");
+    int torque_id = mj_name2id(m, mjOBJ_SENSOR, "ft_sensor_torque");
+    
+    if (force_id < 0 || torque_id < 0) return false;
+    
+    // 获取力数据
+    force[0] = d->sensordata[m->sensor_adr[force_id]];
+    force[1] = d->sensordata[m->sensor_adr[force_id] + 1];
+    force[2] = d->sensordata[m->sensor_adr[force_id] + 2];
+    
+    // 获取扭矩数据
+    torque[0] = d->sensordata[m->sensor_adr[torque_id]];
+    torque[1] = d->sensordata[m->sensor_adr[torque_id] + 1];
+    torque[2] = d->sensordata[m->sensor_adr[torque_id] + 2];
+    
+    return true;
+}
+
 }  // namespace cartesian_controller_simulation

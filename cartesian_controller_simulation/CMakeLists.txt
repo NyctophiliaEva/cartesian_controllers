@@ -19,6 +19,7 @@ find_package(cartesian_controller_base REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(glfw3 REQUIRED)
 
 # Mujoco comes as a pre-built library package.
@@ -65,6 +66,7 @@ ament_target_dependencies(${PROJECT_NAME}
         hardware_interface
         pluginlib
         rclcpp
+        geometry_msgs
 )
 
 target_link_libraries(${PROJECT_NAME}

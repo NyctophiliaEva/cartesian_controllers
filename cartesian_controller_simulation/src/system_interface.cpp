@@ -133,6 +133,12 @@ Simulator::CallbackReturn Simulator::on_init(const hardware_interface::HardwareI
   // DEBUG: print the model path to the console
   // DEBUG: check if the thread is running
   RCLCPP_INFO(rclcpp::get_logger("Simulator"), "Starting simulation thread with model: %s", m_mujoco_model.c_str());
+
+  // OPTIMIZE: 初始化力传感器发布器
+  node_ = std::make_shared<rclcpp::Node>("ft_sensor_publisher");
+  ft_publisher_ = node_->create_publisher<geometry_msgs::msg::WrenchStamped>(
+      "/ft_sensor_wrench", 10);
+
   return Simulator::CallbackReturn::SUCCESS;
 }
 
@@ -201,6 +207,24 @@ Simulator::return_type Simulator::read([[maybe_unused]] const rclcpp::Time & tim
   // - integral gains for steady state accuracy
   m_positions = m_position_commands;
   m_velocities = m_velocity_commands;
+
+  // OPTIMIZE: 获取并发布力传感器数据
+  std::array<double, 3> force, torque;
+  auto& simulator = MuJoCoSimulator::getInstance();
+  
+  if (simulator.getFTSensorData(force, torque)) {
+      ft_msg_.header.stamp = time;
+      ft_msg_.header.frame_id = "tool0";
+      
+      ft_msg_.wrench.force.x = force[0];
+      ft_msg_.wrench.force.y = force[1];
+      ft_msg_.wrench.force.z = force[2];
+      ft_msg_.wrench.torque.x = torque[0];
+      ft_msg_.wrench.torque.y = torque[1];
+      ft_msg_.wrench.torque.z = torque[2];
+      
+      ft_publisher_->publish(ft_msg_);
+  }
 
   // DEBUG: print the state to the console
   // auto vec_to_string = [](const std::vector<double>& vec) {

@@ -41,6 +41,7 @@
 
 #include <cartesian_controller_base/ROS2VersionConfig.h>
 
+#include <array>
 #include <map>
 #include <thread>
 
@@ -49,7 +50,10 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system.hpp"
 #include "hardware_interface/system_interface.hpp"
+#include "geometry_msgs/msg/wrench_stamped.hpp"
 #include "rclcpp/macros.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/node.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
 namespace cartesian_controller_simulation
@@ -107,6 +111,10 @@ private:
 
   // Parameters
   std::string m_mujoco_model;
+
+  rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr ft_publisher_;
+  geometry_msgs::msg::WrenchStamped ft_msg_;
+  std::shared_ptr<rclcpp::Node> node_;
 };
 
 }  // namespace cartesian_controller_simulation
