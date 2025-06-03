@@ -119,7 +119,7 @@ def generate_launch_description():
         "cartesian_motion_controller",
         "motion_control_handle",
         "joint_trajectory_controller",
-        "scaled_joint_trajectory_controller",
+        # "scaled_joint_trajectory_controller",
     ]
     state = "--inactive"
     inactive_spawners = [

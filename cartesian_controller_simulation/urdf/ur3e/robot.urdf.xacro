@@ -7,6 +7,7 @@
   <xacro:arg name="ur_type" default="ur3e"/>
   <!-- ros2_control related parameters -->
   <xacro:arg name="robot_ip" default="192.168.1.101" />
+  <xacro:arg name="generate_ros2_control_tag" default="false"/>
   <!-- parameters -->
   <xacro:arg name="tf_prefix" default=""/>
   <xacro:arg name="transmission_hw_interface" default=""/>
@@ -32,6 +33,7 @@
 
   <xacro:ur_robot name="$(arg ur_type)" 
       robot_ip="$(arg robot_ip)"
+      generate_ros2_control_tag="$(arg generate_ros2_control_tag)"
       tf_prefix="$(arg tf_prefix)" parent="world"
       transmission_hw_interface="$(arg transmission_hw_interface)"
       safety_limits="$(arg safety_limits)"
@@ -51,13 +53,14 @@
 
   <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint.urdf.xacro"/>
 
+  <!-- the parameter is modified for UR3e in mujoco -->
   <ros2_control name="cartesian_controller_simulation" type="system">
-    <xacro:joint_interface name="shoulder_pan_joint" p="1000" d="0.5" />
-    <xacro:joint_interface name="shoulder_lift_joint" p="1000" d="0.5" />
-    <xacro:joint_interface name="elbow_joint" p="500" d="0.5" />
-    <xacro:joint_interface name="wrist_1_joint" p="100" d="0.5" />
-    <xacro:joint_interface name="wrist_2_joint" p="10" d="0.5" />
-    <xacro:joint_interface name="wrist_3_joint" p="10" d="0.5" />
+    <xacro:joint_interface name="shoulder_pan_joint" p="1000" d="100" />
+    <xacro:joint_interface name="shoulder_lift_joint" p="1000" d="100" />
+    <xacro:joint_interface name="elbow_joint" p="500" d="50" />
+    <xacro:joint_interface name="wrist_1_joint" p="200" d="20" />
+    <xacro:joint_interface name="wrist_2_joint" p="200" d="20" />
+    <xacro:joint_interface name="wrist_3_joint" p="200" d="20" />
     <hardware>
       <plugin>cartesian_controller_simulation/Simulator</plugin>
       <param name="mujoco_model">$(arg mujoco_model)</param>
