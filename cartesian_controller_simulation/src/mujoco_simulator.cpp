@@ -137,7 +137,7 @@ int MuJoCoSimulator::simulateImpl(const std::string & model_xml)
   mjr_makeContext(m, &con, mjFONTSCALE_150);
   // NOTE: 设置相机
   cam.distance = 2.0;
-  cam.azimuth = 90.0;
+  cam.azimuth = 240.0;
   cam.elevation = -20.0;
 
   // Simulate in realtime
