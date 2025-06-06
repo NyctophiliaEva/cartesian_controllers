@@ -1,7 +1,7 @@
 <mujoco model="ur3e">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
-
-  <option integrator="implicitfast" timestep="0.002"/>
+  <!-- OPTIMIZE: 使用更好的积分器 RK4,测试速度比 implicit(fast) 更快 -->
+  <option integrator="RK4" timestep="0.002"/>
 
   <default>
     <default class="ur3e">
@@ -115,7 +115,8 @@
                   <site name="attachment_site" pos="0 0.09215 0" quat="-1 1 0 0"/>
                   
                   <!-- 添加力传感器 -->
-                  <body name="ft_sensor_link" pos="0 0.097 0" quat="1 1 0 0">
+                  <!-- OPTIMIZE: 修正参考系，与 attachment_site 一致-->
+                  <body name="ft_sensor_link" pos="0 0.097 0" quat="-1 1 0 0">
                     <geom type="cylinder" size="0.035 0.005" pos="0 0 0" material="black" mass="0"/>
                     <site name="ft_sensor" pos="0 0 0" class="visual"/>
                   </body>
@@ -145,10 +146,9 @@
   <include file="initial_joint_states.xml"/>
 
   <!-- 添加力传感器配置 -->
-  <!-- FIXME: 目前碰撞力过大 -->
-  <!-- FIXME: 测试参考系 -->
+  <!-- OPTIMIZE: 目前碰撞力过大，已按照 Robotiq FT-300 限制最大值 -->
   <sensor>
-    <force name="ft_sensor_force" site="ft_sensor"/>
-    <torque name="ft_sensor_torque" site="ft_sensor"/>
+    <force name="ft_sensor_force" site="ft_sensor" cutoff="300"/>
+    <torque name="ft_sensor_torque" site="ft_sensor" cutoff="30"/>
   </sensor>
 </mujoco>
