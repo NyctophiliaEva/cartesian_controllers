@@ -222,15 +222,15 @@ bool MuJoCoSimulator::getFTSensorData(std::array<double, 3>& force, std::array<d
     
     if (force_id < 0 || torque_id < 0) return false;
     
-    // 获取力数据
-    force[0] = d->sensordata[m->sensor_adr[force_id]];
-    force[1] = d->sensordata[m->sensor_adr[force_id] + 1];
-    force[2] = d->sensordata[m->sensor_adr[force_id] + 2];
+    // HACK: 获取力数据，取负值与实际统一
+    force[0] = - d->sensordata[m->sensor_adr[force_id]];
+    force[1] = - d->sensordata[m->sensor_adr[force_id] + 1];
+    force[2] = - d->sensordata[m->sensor_adr[force_id] + 2];
     
-    // 获取扭矩数据
-    torque[0] = d->sensordata[m->sensor_adr[torque_id]];
-    torque[1] = d->sensordata[m->sensor_adr[torque_id] + 1];
-    torque[2] = d->sensordata[m->sensor_adr[torque_id] + 2];
+    // HACK: 获取扭矩数据，取负值与实际统一
+    torque[0] = - d->sensordata[m->sensor_adr[torque_id]];
+    torque[1] = - d->sensordata[m->sensor_adr[torque_id] + 1];
+    torque[2] = - d->sensordata[m->sensor_adr[torque_id] + 2];
     
     return true;
 }

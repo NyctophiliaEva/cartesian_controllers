@@ -208,7 +208,8 @@ Simulator::return_type Simulator::read([[maybe_unused]] const rclcpp::Time & tim
   m_positions = m_position_commands;
   m_velocities = m_velocity_commands;
 
-  // OPTIMIZE: 获取并发布力传感器数据
+  // OPTIMIZE: 获取并发布力传感器数据 
+  // HACK: 已在mujoco_simulator中实现取负值，与实际统一
   std::array<double, 3> force, torque;
   auto& simulator = MuJoCoSimulator::getInstance();
   
